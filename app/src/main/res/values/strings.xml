@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Cronómetro</string>
+    <string name="hora_inicial">00:00:00</string>
+</resources>
