@@ -23,7 +23,7 @@ class CronometroActivity : AppCompatActivity() {
         val tvTimer = cronometroBinding.cronometroTextView
         val btnPause = cronometroBinding.pauseFloatingButton
 
-        //Botón inicio
+        //Versión 1 en la rama
         btnStart.setOnClickListener {
             if (!isRunning) {
                 timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
