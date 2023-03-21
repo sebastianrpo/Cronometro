@@ -4,13 +4,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.ProgressBar
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.sebastianrpo.cronometro.databinding.ActivityCronometroBinding
 
 class CronometroActivity : AppCompatActivity() {
     private lateinit var cronometroBinding: ActivityCronometroBinding
-    private lateinit var timer: CountDownTimer
-    private var isRunning = false
-    private var elapsedTime = 0L
+    private lateinit var cronometroViewModel: CronometroViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,46 +18,23 @@ class CronometroActivity : AppCompatActivity() {
         val view = cronometroBinding.root
         setContentView(view)
 
-        val btnStart = cronometroBinding.startFloatingButton
-        val btnStop = cronometroBinding.stopFloatingButton
-        val tvTimer = cronometroBinding.cronometroTextView
-        val btnPause = cronometroBinding.pauseFloatingButton
+        cronometroViewModel = ViewModelProvider(this)[CronometroViewModel::class.java]
 
-        //Versión 1 en la rama
-        btnStart.setOnClickListener {
-            if (!isRunning) {
-                timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
-                    override fun onTick(millisUntilFinished: Long) {
-                        elapsedTime += 1000
-                        val hours = (elapsedTime / 3600000).toInt()
-                        val minutes = ((elapsedTime / 60000) % 60).toInt()
-                        val seconds = ((elapsedTime / 1000) % 60).toInt()
-                        tvTimer.text = String.format("%02d:%02d:%02d", hours, minutes, seconds)
-                    }
+        cronometroViewModel.timer.observe(this, Observer {
+            cronometroBinding.cronometroTextView.text = it
+        })
 
-                    override fun onFinish() {}
-                }
-                timer.start()
-                isRunning = true
-            }
+        cronometroBinding.startFloatingButton.setOnClickListener {
+            cronometroViewModel.startTimer()
         }
 
-        btnPause.setOnClickListener {
-            if (isRunning) {
-                timer.cancel()
-                isRunning = false
-            }
+        cronometroBinding.pauseFloatingButton.setOnClickListener {
+            cronometroViewModel.pauseTimer()
         }
 
-        btnStop.setOnClickListener {
-            if (isRunning) {
-                timer.cancel()
-                isRunning = false
-            }
-            elapsedTime = 0L
-            tvTimer.text = "00:00:00"
+        cronometroBinding.stopFloatingButton.setOnClickListener {
+            cronometroViewModel.stopTimer()
         }
     }
 }
-
 
